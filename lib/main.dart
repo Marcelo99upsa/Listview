@@ -24,58 +24,59 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
- 
-  Future <List<Product>> getData() async {
-    var response=await http.get(
-      Uri.parse("https://apprecuperaciondiego.azurewebsites.net/Api/products"),
-      headers: {"Accept":"Application/json"},
-    );
-    var data=json.decode(response.body);
-    print(data);
-    List<Product> products=[];
-    for(var p in data){
-      Product product=Product(p["ProductId"],p["Description"],p["Price"],p["LastBuy"]);
-      products.add(product);
-    }
-    return products;
+  
+  Future <List<Product>>getData() async {
+  var response = await http.get(
+    Uri.parse("https://apprecuperaciondiego.azurewebsites.net/Api/products"),
+    headers: {"Accept":"Application/json"}
+  );
+  var data=json.decode(response.body);
+  print(data);
+  List<Product> products=[];
+  for(var p in data){
+    Product product=Product(p["ProductId"], p["Description"], p["Price"]);
+    products.add(product);
+  }
+  print(products.length);
+  return products;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
-         title: Text("Marcelo App")
-       ),
-       body: Container(
-         child: FutureBuilder(
-           future: getData(),
-           builder: (BuildContext context, AsyncSnapshot snapshot) {
-             print(snapshot.data);
-             if (snapshot.data==null){
-               return Container(child: Center(child: Text("Cargando..."),),);
-             }
-             else {
-               return ListView.builder(
-                 itemCount: snapshot.data.length,
-                 itemBuilder: (BuildContext context,int productid){
-                   return ListTile(title: Text(snapshot.data[productid].description),
-                   subtitle: Text(snapshot.data[productid].price.toString()),
-                   );
-                 },
+         title:Text("Marcelo App")
+    ),
+    body: Container(
+      child: FutureBuilder(
+        future: getData(),
+        builder: (BuildContext  context, AsyncSnapshot snapshot) {
+          print(snapshot.data);
+          if(snapshot.data == null){
+            return Container(child: Center(child: Text("Cargando..."),),);
+          }
+          else{
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (BuildContext context, int productid){
+                return ListTile(title:Text(snapshot.data[productid].description),
+                subtitle: Text(snapshot.data[productid].price.toString()),
+                );
+
+              },
                );
-             }
-           },
-       ),
-       )
+          }
+        },
+      ) ,
+      )
     );
   }
 }
 
-class Product{
-  final int productId;
+class Product {
+  final int productid;
   final String description;
-  final Float price;
-  final DateTime lastBuy;
+  final double price;
 
-  Product (this.productId,this.description,this.price,this.lastBuy);
+  Product (this.productid, this.description, this.price);
 }
